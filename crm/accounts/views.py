@@ -148,15 +148,39 @@ def Index(request):
     }
     return render(request, 'accounts/index.html', context)
 
+from django.shortcuts import render
+from .models import tblProducts, tblTopMenu, tblSubTopMenu
+
 def productDetails(request, pk):
-    Product = tblProducts.objects.get(id = pk)
+    # Get the product based on the provided id (primary key)
+    Product = tblProducts.objects.get(id=pk)
+    
+    # Ensure the rating is treated as an integer
+    try:
+        rating = int(Product.rating)  # Convert rating to an integer
+    except ValueError:
+        rating = 0  # If the rating is not a valid integer, default to 0
+    
+    # Get related products based on the category, excluding the current product
+    RelatedProducts = tblProducts.objects.filter(categoryID=Product.categoryID).exclude(id=pk)
+    
+    # Get all top and sub top menus
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+    
+    # Generate the rating range based on the product's rating
+    rating_range = range(rating)  # This creates a range from 0 to rating-1
+    
+    # Pass the product, related products, menus, and rating range to the template
     context = {
-        'Products' : Product
+        'Products': Product,
+        'RelatedProducts': RelatedProducts,
+        'SubTopMenus': SubTopMenu,
+        'TopMenus': TopMenu,
+        'rating_range': rating_range  # Add this line to pass the range to the template
     }
-    # context = {
-    #     'Products' = Product
-    # }
-    return render(request,'accounts/productDetails.html', context)
+    
+    return render(request, 'accounts/productDetails.html', context)
 
 def About(request):
     return render(request,'accounts/about.html')
@@ -257,4 +281,3 @@ def ListCategory(request):
     }
     return render(request, 'accounts/ListCategory.html', context)
 
-    

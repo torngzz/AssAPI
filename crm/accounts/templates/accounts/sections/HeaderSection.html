@@ -1,3 +1,5 @@
+{% load static %}
+
 <header class="header">
   <div class="header__top">
     <div class="container">
@@ -19,7 +21,7 @@
               <a href="#"><i class="fa fa-pinterest-p"></i></a>
             </div>
             <div class="header__top__right__language">
-              <img src="img/language.png" alt="" />
+              <img src="{% static 'img/language.png'%}" alt="" />
               <div>English</div>
               <span class="arrow_carrot-down"></span>
               <ul>
@@ -39,7 +41,7 @@
     <div class="row">
       <div class="col-lg-3">
         <div class="header__logo">
-          <a href="./index.html"><img src="img/logo.png" alt="" /></a>
+          <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt="" /></a>
         </div>
       </div>
       <div class="col-lg-6">
@@ -47,9 +49,7 @@
           <ul>
             {% for TopMenu in TopMenus%}
               <li>
-                <a href="#">{{TopMenu.topMenuName}}</a>
-                
-    
+                <a href="#{{TopMenu.topMenuName}}">{{TopMenu.topMenuName}}</a>
                 <ul class="header__menu__dropdown">
                 {% for SubTopMenu in SubTopMenus %}
                   {% if TopMenu.id == SubTopMenu.TopMenuID_id %}  
@@ -57,8 +57,7 @@
                   {% endif %}
                 {% endfor %}
                 </ul>
-                      
-                </li>
+              </li>
             {%endfor%}
           </ul>
         </nav>

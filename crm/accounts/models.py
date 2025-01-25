@@ -42,7 +42,9 @@ class tblProducts(models.Model):
     quantity = models.CharField(max_length=200, null=True)
     priceIn = models.CharField(max_length=200, null=True)
     priceOut = models.CharField(max_length=200, null=True)
-    instock = models.CharField(max_length=200, null=True)
+    instock = models.CharField(max_length=200, null=True) 
+    rating = models.CharField(max_length=200, null=True) 
+    description = models.CharField(max_length=200, null=True) 
     productImage = models.ImageField(upload_to ='ProductImages/')
     productDate = models.DateTimeField(auto_now_add=True, null=True)
     def __str__(self):         
