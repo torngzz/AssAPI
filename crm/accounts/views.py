@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework import generics
 from .serializers import *
+from django.shortcuts import render
 
 from .models import *
 
@@ -133,55 +134,6 @@ class SubFooterListCreate(generics.ListCreateAPIView):
 class SubFooterDetail(generics.RetrieveUpdateDestroyAPIView):    
     queryset = tblSubFooter.objects.all()
     serializer_class = SubFooterSerializer
-
-def Index(request):
-    Products = tblProducts.objects.all()
-    Categorys = Category.objects.all()
-    TopMenu = tblTopMenu.objects.all()
-    SubTopMenu = tblSubTopMenu.objects.all()
-    
-    context = {
-        'Products' : Products,
-        'Categories' : Categorys,
-        'SubTopMenus' : SubTopMenu,
-        'TopMenus' : TopMenu
-    }
-    return render(request, 'accounts/index.html', context)
-
-from django.shortcuts import render
-from .models import tblProducts, tblTopMenu, tblSubTopMenu
-
-def productDetails(request, pk):
-    # Get the product based on the provided id (primary key)
-    Product = tblProducts.objects.get(id=pk)
-    
-    # Ensure the rating is treated as an integer
-    try:
-        rating = int(Product.rating)  # Convert rating to an integer
-    except ValueError:
-        rating = 0  # If the rating is not a valid integer, default to 0
-    
-    # Get related products based on the category, excluding the current product
-    RelatedProducts = tblProducts.objects.filter(categoryID=Product.categoryID).exclude(id=pk)
-    
-    # Get all top and sub top menus
-    TopMenu = tblTopMenu.objects.all()
-    SubTopMenu = tblSubTopMenu.objects.all()
-    
-    # Generate the rating range based on the product's rating
-    rating_range = range(rating)  # This creates a range from 0 to rating-1
-    
-    # Pass the product, related products, menus, and rating range to the template
-    context = {
-        'Products': Product,
-        'RelatedProducts': RelatedProducts,
-        'SubTopMenus': SubTopMenu,
-        'TopMenus': TopMenu,
-        'rating_range': rating_range  # Add this line to pass the range to the template
-    }
-    
-    return render(request, 'accounts/productDetails.html', context)
-
 def About(request):
     return render(request,'accounts/about.html')
 
@@ -281,3 +233,166 @@ def ListCategory(request):
     }
     return render(request, 'accounts/ListCategory.html', context)
 
+
+# -----------------------------------------------
+
+def Index(request):
+    Products = tblProducts.objects.all()
+    Categorys = Category.objects.all()
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    totalCarts = tblProductCarts.objects.count()
+    
+    context = {
+        'Products' : Products,
+        'totalCarts' : totalCarts,
+        'Categories' : Categorys,
+        'SubTopMenus' : SubTopMenu,
+        'TopMenus' : TopMenu
+    }
+    return render(request, 'accounts/index.html', context)
+
+
+def productDetails(request, pk):
+    # Get the product based on the provided id (primary key)
+    Product = tblProducts.objects.get(id=pk)
+    
+    # Ensure the rating is treated as an integer
+    try:
+        rating = int(Product.rating)  # Convert rating to an integer
+    except ValueError:
+        rating = 0  # If the rating is not a valid integer, default to 0
+    
+    # Get related products based on the category, excluding the current product
+    RelatedProducts = tblProducts.objects.filter(categoryID=Product.categoryID).exclude(id=pk)
+    
+    # Get all top and sub top menus
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+    
+    # Generate the rating range based on the product's rating
+    rating_range = range(rating)  # This creates a range from 0 to rating-1
+    
+    totalCarts = tblProductCarts.objects.count()
+    
+    context = {
+        'totalCarts' : totalCarts,
+        'Products': Product,
+        'RelatedProducts': RelatedProducts,
+        'SubTopMenus': SubTopMenu,
+        'TopMenus': TopMenu,
+        'rating_range': rating_range  # Add this line to pass the range to the template
+    }
+    
+    return render(request, 'accounts/productDetails.html', context)
+
+
+
+def ProductCarts(request):
+    ProductCarts = tblProductCarts.objects.all()
+    totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    totalCarts = tblProductCarts.objects.count()
+    
+    context = {
+        'totalCarts' : totalCarts,
+        'ProductCarts' :ProductCarts,
+        'totalPrice' :totalPrice,
+        'SubTopMenus': SubTopMenu,
+        'TopMenus': TopMenu,
+    }
+    return render(request, 'accounts/shopingCart.html', context)
+
+def ConfirmPayment(request):
+    ProductCarts = tblProductCarts.objects.all()
+    totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    for product in ProductCarts: 
+        product.priceOut = float(product.priceOut) * int(product.quantity);
+    
+    totalCarts = tblProductCarts.objects.count()
+    
+    context = {
+        'totalCarts' : totalCarts,
+        'ProductCarts' :ProductCarts,
+        'totalPrice' :totalPrice,
+        'SubTopMenus': SubTopMenu,
+        'TopMenus': TopMenu,
+    }
+    return render(request, 'accounts/confirmPayment.html', context)
+
+
+from django.shortcuts import render, redirect
+from django.http import Http404
+from django.contrib.auth.decorators import login_required
+from .models import tblProducts, tblProductCarts
+
+
+def add_to_cart(request, product_id, quantity):
+    # Ensure quantity is valid
+    try:
+        quantity = int(quantity)
+        if quantity <= 0:
+            raise ValueError("Quantity must be greater than 0")
+    except (ValueError, TypeError):
+        raise Http404("Invalid quantity")
+
+    # Retrieve the product based on the product_id
+    try:
+        product = tblProducts.objects.get(id=product_id)
+    except tblProducts.DoesNotExist:
+        raise Http404("Product not found")
+
+    # Insert product into tblProductCarts
+    cart_item, created = tblProductCarts.objects.get_or_create(
+        productId=product,
+        defaults={
+            'quantity': quantity,
+            'priceOut': product.priceOut,
+            'productImage': product.productImage,
+            'productName': product.productName
+        }
+    )
+
+    if not created:  # If the cart item already exists, increase the quantity
+        cart_item.quantity = quantity + int(cart_item.quantity);
+        cart_item.save()
+
+    totalCarts = tblProductCarts.objects.count();
+
+    return JsonResponse({'status': 'success', 'message': f'{product.productName} added to cart!', "totalCarts": totalCarts})
+
+
+def processPayment(request):
+    if request.method == 'POST':
+        username = request.POST.get('first_name') + request.POST.get('last_name')
+        country = request.POST.get('country')
+        address = request.POST.get('address')
+        bank_account = request.POST.get('bank_account')
+        amount = request.POST.get('totalAmount')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        remark = request.POST.get('remark')
+
+        transaction = tblTransactions(
+            Username=username,
+            Country=country,
+            Address=address,
+            BankAccount=bank_account,
+            Amount=amount,
+            Phone=phone,
+            Email=email,
+            Remark=remark
+        )
+        transaction.save()
+
+        tblProductCarts.objects.all().delete()
+        
+        return HttpResponseRedirect('/Home')  # Redirect to a success page after processing the order
+
+    return render(request, 'index.html')

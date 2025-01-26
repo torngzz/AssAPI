@@ -49,6 +49,16 @@ class tblProducts(models.Model):
     productDate = models.DateTimeField(auto_now_add=True, null=True)
     def __str__(self):         
         return self.productName
+    
+class tblProductCarts(models.Model):
+    productId = models.ForeignKey(tblProducts, on_delete=models.CASCADE, null=True)
+    productName = models.CharField(max_length=200, null=True)
+    quantity = models.CharField(max_length=200, null=True)
+    priceOut = models.CharField(max_length=200, null=True)
+    productImage = models.ImageField(upload_to ='ProductImages/')
+    productDate = models.DateTimeField(auto_now_add=True, null=True)
+    def __str__(self):         
+        return self.productName
 
 class tblClients(models.Model):
     clientName = models.CharField(max_length=200, null=True)
@@ -131,3 +141,15 @@ class tblSubFooter(models.Model):
     def __str__(self):
         return f'{self.footerID} {self.footerID.footerName}'
 
+class tblTransactions(models.Model):
+    Username = models.CharField(max_length=200, null=True)
+    Country = models.CharField(max_length=200, null=True)
+    Address = models.CharField(max_length=200, null=True)
+    BankAccount = models.CharField(max_length=200, null=True)
+    Amount = models.CharField(max_length=200, null=True)
+    Phone = models.CharField(max_length=200, null=True)
+    Email =models.CharField(max_length=200, null=True)
+    Remark = models.TextField(null=True)
+
+    def __str__(self):
+        return self.Username

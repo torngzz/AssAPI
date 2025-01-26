@@ -49,7 +49,7 @@
           <ul>
             {% for TopMenu in TopMenus%}
               <li>
-                <a href="#{{TopMenu.topMenuName}}">{{TopMenu.topMenuName}}</a>
+                <a href="http://127.0.0.1:8000/{{TopMenu.topMenuName}}">{{TopMenu.topMenuName}}</a>
                 <ul class="header__menu__dropdown">
                 {% for SubTopMenu in SubTopMenus %}
                   {% if TopMenu.id == SubTopMenu.TopMenuID_id %}  
@@ -69,7 +69,7 @@
               <a href="#"><i class="fa fa-heart"></i> <span>1</span></a>
             </li>
             <li>
-              <a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a>
+              <a href="{% url 'ProductCarts' %}"><i class="fa fa-shopping-bag"></i> <span id="totalCarts">{{totalCarts}}</span></a>
             </li>
           </ul>
           <div class="header__cart__price">item: <span>$150.00</span></div>

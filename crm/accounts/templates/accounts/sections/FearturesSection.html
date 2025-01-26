@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Categories Section Begin -->
 <section class="categories">
   <div class="container">
@@ -86,17 +87,17 @@
                 <a href="#"><i class="fa fa-retweet"></i></a>
               </li>
               <li>
-                <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                <!-- <a href="{% url 'add_to_cart' Product.id 1 %}"><i class="fa fa-shopping-cart"></i></a> -->
+                <a href="javascript:void(0);" class="add-to-cart" data-id="{{Product.id}}" data-quantity="1">
+                  <i class="fa fa-shopping-cart"></i></a>
               </li>
             </ul>
           </div>
           <div class="featured__item__text">
             <h6>
-              <a href="{% url 'productDetails' Product.id %}"
-                >{{Product.productName}}</a
-              >
+              <a href="{% url 'productDetails' Product.id %}">{{Product.productName}}</a>
             </h6>
-            <h5>{{Product.priceOut}}.00$</h5>
+            <h5>{{ Product.priceOut|floatformat:"2" }}$</h5>
           </div>
         </div>
       </div>
@@ -106,3 +107,38 @@
   </div>
 </section>
 <!-- Featured Section End -->
+
+
+<script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+<script src="{% static 'js/sweetalert.js'%}"></script>
+<script>
+  $(document).ready(function() {
+    // When the user clicks the "Add to Cart" button
+    $('.add-to-cart').click(function() {
+      var productId = $(this).data('id');
+      var quantity = $(this).data('quantity');
+      
+      // Send AJAX request to add product to cart
+      $.ajax({
+        url: '/addToCart/' + productId + '/' + quantity + '/',  // URL of your add_to_cart view
+        method: 'GET',  // Can also use POST if preferred
+        success: function(response) {
+          if(response.status == 'success') {
+            $('#totalCarts').text(response.totalCarts)
+            Swal.fire({
+              title: response.message,
+              icon: "success",
+              draggable: true,
+              timer: 1000,
+            });
+          } else {
+            alert(response.message);  // Show error message if any
+          }
+        },
+        error: function() {
+          alert('An error occurred while adding the item to your cart.');
+        }
+      });
+    });
+  });
+</script>
