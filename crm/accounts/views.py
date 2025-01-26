@@ -5,6 +5,14 @@ from rest_framework import generics
 from .serializers import *
 from django.shortcuts import render
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import RegistrationForm # type: ignore
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
 from .models import *
 
 # Create your views here.
@@ -242,6 +250,8 @@ def Index(request):
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
 
+    user_id = request.user.id
+
     totalCarts = tblProductCarts.objects.count()
     
     context = {
@@ -249,7 +259,8 @@ def Index(request):
         'totalCarts' : totalCarts,
         'Categories' : Categorys,
         'SubTopMenus' : SubTopMenu,
-        'TopMenus' : TopMenu
+        'TopMenus' : TopMenu,
+        "user_id" : user_id
     }
     return render(request, 'accounts/index.html', context)
 
@@ -288,7 +299,7 @@ def productDetails(request, pk):
     return render(request, 'accounts/productDetails.html', context)
 
 
-
+@login_required
 def ProductCarts(request):
     ProductCarts = tblProductCarts.objects.all()
     totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
@@ -332,7 +343,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from .models import tblProducts, tblProductCarts
 
-
+@login_required
 def add_to_cart(request, product_id, quantity):
     # Ensure quantity is valid
     try:
@@ -396,3 +407,31 @@ def processPayment(request):
         return HttpResponseRedirect('/Home')  # Redirect to a success page after processing the order
 
     return render(request, 'index.html')
+
+
+# Registration view
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the user
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)  # Log the user in after registration
+            return HttpResponseRedirect('/Home') # Redirect to homepage or wherever you want
+    else:
+        form = RegistrationForm()
+    return render(request, 'accounts/register.html', {'form': form})
+
+# Login view
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return HttpResponseRedirect('/Home') # Redirect to the homepage or dashboard
+    else:
+        form = AuthenticationForm()
+    return render(request, 'accounts/login.html', {'form': form})

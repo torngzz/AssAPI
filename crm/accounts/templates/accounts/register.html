@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7fc;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        font-weight: bold;
+        color: #555;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus {
+        border-color: #5cb85c;
+        outline: none;
+      }
+
+      .btn-submit {
+        padding: 12px;
+        background-color: #5cb85c;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .btn-submit:hover {
+        background-color: #4cae4c;
+      }
+
+      .form-group .error {
+        color: red;
+        font-size: 12px;
+      }
+
+      .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+    .form-footer a {
+      text-decoration: none;
+      /* background-color: #5cb85c; */
+
+      font-weight: 500;
+    }
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Register</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          {{ form.username.errors }}
+          <label for="id_username">Username</label>
+          {{ form.username }}
+        </div>
+
+        <div class="form-group">
+          {{ form.first_name.errors }}
+          <label for="id_first_name">First Name</label>
+          {{ form.first_name }}
+        </div>
+
+        <div class="form-group">
+          {{ form.last_name.errors }}
+          <label for="id_last_name">Last Name</label>
+          {{ form.last_name }}
+        </div>
+
+        <div class="form-group">
+          {{ form.email.errors }}
+          <label for="id_email">Email</label>
+          {{ form.email }}
+        </div>
+
+        <div class="form-group">
+          {{ form.password1.errors }}
+          <label for="id_password1">Password</label>
+          {{ form.password1 }}
+        </div>
+
+        <div class="form-group">
+          {{ form.password2.errors }}
+          <label for="id_password2">Confirm Password</label>
+          {{ form.password2 }}
+        </div>
+
+        <button type="submit" class="btn-submit">Register</button>
+        <div class="form-footer">
+          <p>
+            Have an account ? 
+            <a href="http://127.0.0.1:8000/accounts/login/">Login here</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
