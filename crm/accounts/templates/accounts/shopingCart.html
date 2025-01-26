@@ -3,6 +3,18 @@
 <html lang="zxx">
   <head>
     {% include 'accounts/sections/Head.html'%}
+
+    <style>
+    .pro-quantity input {
+      background-color: rgb(214, 214, 214) !important;
+      text-align: center !important;
+      border: none;
+      padding: 10px;
+      font-size: 18px;
+      font-weight: bolder;
+      width: 6rem;
+    }
+    </style>
   </head>
 
   <body>
@@ -132,9 +144,9 @@
                     </td>
                     <td class="shoping__cart__quantity">
                       <div class="quantity">
-                        <div class="pro-qty">
+                        <div class="pro-quantity">
                           <input
-                            type="number"
+                            type="text"
                             class="quantity-input"
                             value="{{ ProductCart.quantity }}"
                             min="1"
@@ -147,6 +159,7 @@
                       ${{ ProductCart.priceOut }}.00
                     </td>
                     <td class="shoping__cart__item__close">
+                      
                       <span class="icon_close"></span>
                     </td>
                   </tr>

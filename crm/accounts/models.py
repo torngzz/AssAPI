@@ -51,6 +51,7 @@ class tblProducts(models.Model):
         return self.productName
     
 class tblProductCarts(models.Model):
+    UserId = models.CharField(max_length=200, null=True)
     productId = models.ForeignKey(tblProducts, on_delete=models.CASCADE, null=True)
     productName = models.CharField(max_length=200, null=True)
     quantity = models.CharField(max_length=200, null=True)
@@ -142,6 +143,7 @@ class tblSubFooter(models.Model):
         return f'{self.footerID} {self.footerID.footerName}'
 
 class tblTransactions(models.Model):
+    UserId = models.CharField(max_length=200, null=True)
     Username = models.CharField(max_length=200, null=True)
     Country = models.CharField(max_length=200, null=True)
     Address = models.CharField(max_length=200, null=True)

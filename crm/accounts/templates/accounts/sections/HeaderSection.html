@@ -1,5 +1,15 @@
 {% load static %}
 
+<style>
+  .header__menu__dropdown {
+    background-color: transparent !important;
+  }
+  .header__menu__dropdown >li {
+    display: block;
+    background-color: black !important;
+  }
+</style>
+
 <header class="header">
   <div class="header__top">
     <div class="container">
@@ -30,7 +40,9 @@
               </ul>
             </div>
             <div class="header__top__right__auth">
-              <a href="http://127.0.0.1:8000/accounts/login/"><i class="fa fa-user"></i> Login</a>
+              <a href="http://127.0.0.1:8000/accounts/login/"
+                ><i class="fa fa-user"></i> Login</a
+              >
             </div>
           </div>
         </div>
@@ -41,23 +53,31 @@
     <div class="row">
       <div class="col-lg-3">
         <div class="header__logo">
-          <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt="" /></a>
+          <a href="./index.html"
+            ><img src="{% static 'img/logo.png'%}" alt=""
+          /></a>
         </div>
       </div>
       <div class="col-lg-6">
         <nav class="header__menu">
           <ul>
             {% for TopMenu in TopMenus%}
-              <li>
-                <a href="http://127.0.0.1:8000/{{TopMenu.topMenuName}}">{{TopMenu.topMenuName}}</a>
-                <ul class="header__menu__dropdown">
-                {% for SubTopMenu in SubTopMenus %}
-                  {% if TopMenu.id == SubTopMenu.TopMenuID_id %}  
-                      <li><a href="./shop-details.html">{{SubTopMenu.subTopMenuName}}</a></li>
+            <li>
+              <a href="http://127.0.0.1:8000/{{TopMenu.topMenuName}}"
+                >{{TopMenu.topMenuName}}</a
+              >
+              <ul class="header__menu__dropdown">
+                {% for SubTopMenu in SubTopMenus %} 
+                  {% if TopMenu.id == SubTopMenu.TopMenuID_id %}
+                  <li>
+                    <a href="./shop-details.html"
+                      >{{SubTopMenu.subTopMenuName}}</a
+                    >
+                  </li>
                   {% endif %}
-                {% endfor %}
-                </ul>
-              </li>
+                 {% endfor %}
+              </ul>
+            </li>
             {%endfor%}
           </ul>
         </nav>
@@ -69,7 +89,10 @@
               <a href="#"><i class="fa fa-heart"></i> <span>1</span></a>
             </li>
             <li>
-              <a href="{% url 'ProductCarts' %}"><i class="fa fa-shopping-bag"></i> <span id="totalCarts">{{totalCarts}}</span></a>
+              <a href="{% url 'ProductCarts' %}"
+                ><i class="fa fa-shopping-bag"></i>
+                <span id="totalCarts">{{totalCarts}}</span></a
+              >
             </li>
           </ul>
           <div class="header__cart__price">item: <span>$150.00</span></div>

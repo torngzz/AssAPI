@@ -1,18 +1,14 @@
-from django.shortcuts import render
-from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework import generics
 from .serializers import *
-from django.shortcuts import render
-
-from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm # type: ignore
 
+from django.shortcuts import render, redirect
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
+from .models import tblProducts, tblProductCarts
 from .models import *
 
 # Create your views here.
@@ -250,9 +246,9 @@ def Index(request):
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
 
-    user_id = request.user.id
+    userId = request.user.id
 
-    totalCarts = tblProductCarts.objects.count()
+    totalCarts = tblProductCarts.objects.filter(UserId = userId).count();
     
     context = {
         'Products' : Products,
@@ -260,7 +256,7 @@ def Index(request):
         'Categories' : Categorys,
         'SubTopMenus' : SubTopMenu,
         'TopMenus' : TopMenu,
-        "user_id" : user_id
+        "userId" : userId
     }
     return render(request, 'accounts/index.html', context)
 
@@ -284,8 +280,9 @@ def productDetails(request, pk):
     
     # Generate the rating range based on the product's rating
     rating_range = range(rating)  # This creates a range from 0 to rating-1
+    userId = request.user.id
     
-    totalCarts = tblProductCarts.objects.count()
+    totalCarts = tblProductCarts.objects.filter(UserId = userId).count()
     
     context = {
         'totalCarts' : totalCarts,
@@ -301,13 +298,14 @@ def productDetails(request, pk):
 
 @login_required
 def ProductCarts(request):
-    ProductCarts = tblProductCarts.objects.all()
-    totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
+    userId = request.user.id
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
+    ProductCarts = tblProductCarts.objects.filter(UserId = userId).all()
 
-    totalCarts = tblProductCarts.objects.count()
+    totalCarts = ProductCarts.count()
     
+    totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
     context = {
         'totalCarts' : totalCarts,
         'ProductCarts' :ProductCarts,
@@ -317,8 +315,10 @@ def ProductCarts(request):
     }
     return render(request, 'accounts/shopingCart.html', context)
 
+@login_required
 def ConfirmPayment(request):
-    ProductCarts = tblProductCarts.objects.all()
+    userId = request.user.id
+    ProductCarts = tblProductCarts.objects.filter(UserId = userId).all()
     totalPrice = sum(float(product.priceOut) * int(product.quantity) for product in ProductCarts)    # Get all top and sub top menus
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
@@ -326,7 +326,7 @@ def ConfirmPayment(request):
     for product in ProductCarts: 
         product.priceOut = float(product.priceOut) * int(product.quantity);
     
-    totalCarts = tblProductCarts.objects.count()
+    totalCarts = ProductCarts.count()
     
     context = {
         'totalCarts' : totalCarts,
@@ -337,11 +337,6 @@ def ConfirmPayment(request):
     }
     return render(request, 'accounts/confirmPayment.html', context)
 
-
-from django.shortcuts import render, redirect
-from django.http import Http404
-from django.contrib.auth.decorators import login_required
-from .models import tblProducts, tblProductCarts
 
 @login_required
 def add_to_cart(request, product_id, quantity):
@@ -359,9 +354,11 @@ def add_to_cart(request, product_id, quantity):
     except tblProducts.DoesNotExist:
         raise Http404("Product not found")
 
+    userId = request.user.id
     # Insert product into tblProductCarts
     cart_item, created = tblProductCarts.objects.get_or_create(
-        productId=product,
+        productId = product,
+        UserId = userId,
         defaults={
             'quantity': quantity,
             'priceOut': product.priceOut,
@@ -374,11 +371,11 @@ def add_to_cart(request, product_id, quantity):
         cart_item.quantity = quantity + int(cart_item.quantity);
         cart_item.save()
 
-    totalCarts = tblProductCarts.objects.count();
+    totalCarts = tblProductCarts.objects.filter(UserId = userId).count();
 
     return JsonResponse({'status': 'success', 'message': f'{product.productName} added to cart!', "totalCarts": totalCarts})
 
-
+@login_required
 def processPayment(request):
     if request.method == 'POST':
         username = request.POST.get('first_name') + request.POST.get('last_name')
@@ -389,8 +386,10 @@ def processPayment(request):
         phone = request.POST.get('phone')
         email = request.POST.get('email')
         remark = request.POST.get('remark')
+        userId = request.user.id
 
         transaction = tblTransactions(
+            UserId = userId,
             Username=username,
             Country=country,
             Address=address,
@@ -402,7 +401,7 @@ def processPayment(request):
         )
         transaction.save()
 
-        tblProductCarts.objects.all().delete()
+        tblProductCarts.objects.filter(UserId = userId).delete()
         
         return HttpResponseRedirect('/Home')  # Redirect to a success page after processing the order
 
