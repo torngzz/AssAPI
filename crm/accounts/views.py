@@ -151,7 +151,25 @@ def Pricing(request):
     return render(request,'accounts/pricing.html')
 
 def Blog(request):
-    return render(request,'accounts/blog.html')
+    Products = tblProducts.objects.all()
+    Categorys = Category.objects.all()
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    userId = request.user.id
+
+    totalCarts = tblProductCarts.objects.filter(UserId = userId).count();
+    
+    context = {
+        'Products' : Products,
+        'totalCarts' : totalCarts,
+        'Categories' : Categorys,
+        'SubTopMenus' : SubTopMenu,
+        'TopMenus' : TopMenu,
+        "userId" : userId
+    }
+
+    return render(request,'accounts/blog.html', context)
 
 def Contact(request):
     return render(request,'accounts/contact.html')
@@ -434,3 +452,27 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
+
+
+def Shop(request):
+    # Fetch all necessary objects
+    Products = tblProducts.objects.all()
+    Categories = Category.objects.all()
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    # Handle category filtering
+    selected_category = request.GET.get('category')
+    if selected_category:
+        Products = Products.filter(categoryID=selected_category)
+
+    totalCarts = tblProducts.objects.count()  # Adjust this as per your cart logic
+
+    context = {
+        'Products': Products,
+        'Categories': Categories,
+        'SubTopMenus': SubTopMenu,
+        'TopMenus': TopMenu,
+        'totalCarts': totalCarts,
+    }
+    return render(request, 'accounts/shop-grid.html', context)
