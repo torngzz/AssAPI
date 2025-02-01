@@ -263,12 +263,19 @@ def Index(request):
     Categorys = Category.objects.all()
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
+    ProductCarts = tblProductCarts.objects.all()
+
+    newProducts = Products.order_by('-productDate')[:6];
+    topRatedproducts = Products.all().order_by('-rating')[:6];
+    mostBuyProductIds = ProductCarts.all().values_list('productId', flat=True).distinct()
+    mostBuyProducts = Products.all().filter(id__in=mostBuyProductIds)[:6]
 
     userId = request.user.id
-
-    totalCarts = tblProductCarts.objects.filter(UserId = userId).count();
-    
+    totalCarts = ProductCarts.all().filter(UserId = userId).count();   
     context = {
+        'NewProducts' : newProducts,
+        'TopRatedproducts' : topRatedproducts,
+        'MostBuyProducts' : mostBuyProducts,
         'Products' : Products,
         'totalCarts' : totalCarts,
         'Categories' : Categorys,

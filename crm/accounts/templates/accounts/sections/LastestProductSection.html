@@ -3,65 +3,37 @@
     <div class="row">
       <div class="col-lg-4 col-md-6">
         <div class="latest-product__text">
-          <h4>Latest Products</h4>
+          <h4>New Products</h4>
           <div class="latest-product__slider owl-carousel">
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+              {% for NewProduct in NewProducts %}
+                  {% if forloop.counter >= 1 and forloop.counter <= 3 %}
+                      <a href="#" class="latest-product__item">
+                          <div class="latest-product__item__pic">
+                              <img src="{{ NewProduct.productImage }}" alt="" />
+                          </div>
+                          <div class="latest-product__item__text">
+                              <h6>{{ NewProduct.productName }}</h6>
+                              <span>${{ NewProduct.priceOut|floatformat:"2" }}</span>
+                          </div>
+                      </a>
+                  {% endif %}
+              {% endfor %}
             </div>
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+              {% for product in NewProducts %}
+                {% if forloop.counter >= 4 and forloop.counter <= 10 %}
+                    <a href="#" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.productImage }}" alt="" />
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.productName }}</h6>
+                            <span>${{ product.priceOut|floatformat:"2" }}</span>
+                        </div>
+                    </a>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -71,127 +43,72 @@
           <h4>Top Rated Products</h4>
           <div class="latest-product__slider owl-carousel">
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+              {% for product in TopRatedproducts %}
+                {% if forloop.counter >= 1 and forloop.counter <= 3 %}
+                    <a href="#" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.productImage }}" alt="" />
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.productName }}</h6>
+                            <span>${{ product.priceOut|floatformat:"2" }}</span>
+                        </div>
+                    </a>
+                {% endif %}
+              {% endfor %}
             </div>
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+              {% for product in TopRatedproducts %}
+                {% if forloop.counter >= 4 and forloop.counter <= 10 %}
+                    <a href="#" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.productImage }}" alt="" />
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.productName }}</h6>
+                            <span>${{ product.priceOut|floatformat:"2" }}</span>
+                        </div>
+                    </a>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6">
         <div class="latest-product__text">
-          <h4>Review Products</h4>
+          <h4>Most Buy Products</h4>
           <div class="latest-product__slider owl-carousel">
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+            
+              {% for product in MostBuyProducts %}
+                {% if forloop.counter >= 1 and forloop.counter <= 3 %}
+                    <a href="#" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.productImage }}" alt="" />
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.productName }}</h6>
+                            <span>${{ product.priceOut|floatformat:"2" }}</span>
+                        </div>
+                    </a>
+                {% endif %}
+              {% endfor %}
             </div>
             <div class="latest-prdouct__slider__item">
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-1.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-2.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
-              <a href="#" class="latest-product__item">
-                <div class="latest-product__item__pic">
-                  <img src="img/latest-product/lp-3.jpg" alt="" />
-                </div>
-                <div class="latest-product__item__text">
-                  <h6>Crab Pool Security</h6>
-                  <span>$30.00</span>
-                </div>
-              </a>
+              {% for product in MostBuyProducts %}
+                {% if forloop.counter >= 4 and forloop.counter <= 10 %}
+                    <a href="#" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.productImage }}" alt="" />
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.productName }}</h6>
+                            <span>${{ product.priceOut|floatformat:"2" }}</span>
+                        </div>
+                    </a>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
