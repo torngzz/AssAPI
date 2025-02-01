@@ -455,18 +455,19 @@ def login_view(request):
 
 
 def Shop(request):
-    # Fetch all necessary objects
     Products = tblProducts.objects.all()
     Categories = Category.objects.all()
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
+    
+    # Use select_related() to optimize queries and avoid multiple DB hits
+    tblProductDiscounted = tblProductDiscount.objects.select_related('productDiscountID', 'productDiscountID__categoryID')
 
-    # Handle category filtering
     selected_category = request.GET.get('category')
     if selected_category:
         Products = Products.filter(categoryID=selected_category)
 
-    totalCarts = tblProducts.objects.count()  # Adjust this as per your cart logic
+    totalCarts = tblProducts.objects.count()
 
     context = {
         'Products': Products,
@@ -474,5 +475,6 @@ def Shop(request):
         'SubTopMenus': SubTopMenu,
         'TopMenus': TopMenu,
         'totalCarts': totalCarts,
+        'tblProductDiscount': tblProductDiscounted,
     }
     return render(request, 'accounts/shop-grid.html', context)
