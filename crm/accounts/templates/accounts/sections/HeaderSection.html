@@ -70,7 +70,7 @@
                 {% for SubTopMenu in SubTopMenus %} 
                   {% if TopMenu.id == SubTopMenu.TopMenuID_id %}
                   <li>
-                    <a href="./shop-details.html"
+                    <a href="http://127.0.0.1:8000/{{SubTopMenu.subTopMenuName}}"
                       >{{SubTopMenu.subTopMenuName}}</a
                     >
                   </li>
@@ -79,9 +79,9 @@
               </ul>
             </li>
             {%endfor%}
-            <li>
+            <!-- <li>
               <a href="#footer">Contact us</a>
-            </li>
+            </li> -->
           </ul>
         </nav>
       </div>

@@ -118,6 +118,15 @@ class tblProductDetail(models.Model):
 
     def __str__(self):
         return f'{self.productDetailName}'
+    
+class tblProductDiscount(models.Model):
+    productDiscountDateFrom = models.DateTimeField (auto_now_add=True, null=True)
+    productDiscountDateTo = models.DateTimeField (auto_now_add=True, null=True)
+    productDiscountID = models.ForeignKey(tblProducts, on_delete=models.CASCADE, null=True)
+    productDiscountPercentage = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return f'{self.productDiscountID}'
 
 class tblProductDetailImage(models.Model):
     productDetailImageName = models.CharField(max_length=200, null=True)

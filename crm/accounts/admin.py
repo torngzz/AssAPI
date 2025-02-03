@@ -70,6 +70,7 @@ admin.site.register(tblSubTopMenu)
 admin.site.register(tblProductDetail)
 admin.site.register(tblProductCarts)
 admin.site.register(tblTransactions)
+admin.site.register(tblProductDiscount)
 # admin.site.register(tblSub2TopMenu)
 
 # admin.site.register(Customer, CustomerAdmin)

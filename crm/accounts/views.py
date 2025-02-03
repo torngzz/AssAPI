@@ -8,8 +8,10 @@ from .forms import RegistrationForm # type: ignore
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from .models import tblProducts, tblProductCarts
 from .models import *
+
 
 # Create your views here.
 
@@ -172,7 +174,24 @@ def Blog(request):
     return render(request,'accounts/blog.html', context)
 
 def Contact(request):
-    return render(request,'accounts/contact.html')
+    Products = tblProducts.objects.all()
+    Categorys = Category.objects.all()
+    TopMenu = tblTopMenu.objects.all()
+    SubTopMenu = tblSubTopMenu.objects.all()
+
+    userId = request.user.id
+
+    totalCarts = tblProductCarts.objects.filter(UserId = userId).count();
+    
+    context = {
+        'Products' : Products,
+        'totalCarts' : totalCarts,
+        'Categories' : Categorys,
+        'SubTopMenus' : SubTopMenu,
+        'TopMenus' : TopMenu,
+        "userId" : userId
+    }
+    return render(request,'accounts/contact.html', context)
 
 def Team(request):
     return render(request,'accounts/team.html')
@@ -459,29 +478,58 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
-
+from django.core.paginator import Paginator
 
 def Shop(request):
     Products = tblProducts.objects.all()
     Categories = Category.objects.all()
     TopMenu = tblTopMenu.objects.all()
     SubTopMenu = tblSubTopMenu.objects.all()
-    
-    # Use select_related() to optimize queries and avoid multiple DB hits
-    tblProductDiscounted = tblProductDiscount.objects.select_related('productDiscountID', 'productDiscountID__categoryID')
+
+    # ✅ Fetch Discounted Products
+    tblProductDiscounted = tblProductDiscount.objects.select_related(
+        'productDiscountID', 'productDiscountID__categoryID'
+    )
+
+    # ✅ Ensure uniqueness (fixing the duplicate issue)
+    unique_discounts = {}
+    for discount in tblProductDiscounted:
+        product_id = discount.productDiscountID.id
+        if product_id not in unique_discounts:
+            unique_discounts[product_id] = discount  
+    tblProductDiscounted = list(unique_discounts.values())  
 
     selected_category = request.GET.get('category')
     if selected_category:
         Products = Products.filter(categoryID=selected_category)
 
+    # ✅ Add finalPrice calculation
+    for discount in tblProductDiscounted:
+        try:
+            original_price = float(discount.productDiscountID.priceOut)
+            discount_percentage = float(discount.productDiscountPercentage) / 100
+            discount.discountAmount = original_price * discount_percentage
+            discount.finalPrice = original_price - discount.discountAmount
+        except ValueError:
+            discount.discountAmount = 0
+            discount.finalPrice = discount.productDiscountID.priceOut
+
     totalCarts = tblProducts.objects.count()
 
+    # **Pagination (6 products per page)**
+    paginator = Paginator(Products, 6)  # 🔥 Set to 6 products per page
+    page_number = request.GET.get('page')
+    paginated_products = paginator.get_page(page_number)
+
     context = {
-        'Products': Products,
+        'Products': paginated_products,
         'Categories': Categories,
         'SubTopMenus': SubTopMenu,
         'TopMenus': TopMenu,
         'totalCarts': totalCarts,
         'tblProductDiscount': tblProductDiscounted,
+        'paginator': paginator,
+        'paginatedProducts': paginated_products
     }
+
     return render(request, 'accounts/shop-grid.html', context)
